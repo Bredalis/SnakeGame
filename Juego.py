@@ -73,7 +73,7 @@ while run:
         			velocidad_y = 5
 
     # Velocidad de la serpiente
-    reloj.tick(50)
+    reloj.tick(40)
 
     # Mover la serpiente en cada iteración
     serpiente_rect.x += velocidad_x
