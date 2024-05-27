@@ -3,12 +3,12 @@
 
 import pygame
 import random
-from Guardar_Record import *
+from Record import *
 
-# Datos para guardar el 
-# record y mostrar el maximo 
+# Instancia para acceder 
+# al record del juego 
 
-guardar_record = GuardarRecord()
+guardar_record = Record()
 
 # Inicir pygame
 
@@ -16,16 +16,18 @@ pygame.init()
 pygame.mixer.init()
 
 # Tamaño de la ventana
+
 ANCHO, ALTO = 550, 500
 
 # Colores
+
 VERDE = (0, 255, 0)
 BLANCO = (255, 255, 255)
 
 ventana = pygame.display.set_mode((ANCHO, ALTO))
 pygame.display.set_caption("SnakeGame")
 
-# Imagen de la manzana
+# Crear imagen de la manzana
 
 manzana_img = pygame.image.load("Apple.png")
 manzana_rect = manzana_img.get_rect()
@@ -42,6 +44,8 @@ record = 0
 
 run = True
 reloj = pygame.time.Clock()
+
+# Logica del juego
 
 while run:
 
@@ -79,9 +83,11 @@ while run:
         			velocidad_y = 5
 
     # Velocidad de la serpiente
+
     reloj.tick(40)
 
     # Mover la serpiente en cada iteración
+
     serpiente_rect.x += velocidad_x
     serpiente_rect.y += velocidad_y
 
@@ -116,6 +122,7 @@ while run:
         guardar_record.guardar_record(record)
 
     # Ajustar las dimensiones de la serpiente para que se doble
+
     if velocidad_x != 0:
     	serpiente_rect.width = 30 + puntos * 10
     	serpiente_rect.height = 20 
@@ -125,6 +132,7 @@ while run:
         serpiente_rect.height = 30 + puntos * 10
 
     # Fin del juego
+
     if (serpiente_rect.left < 0 or serpiente_rect.right > ANCHO or
             serpiente_rect.top < 0 or serpiente_rect.bottom > ALTO):
 
@@ -140,6 +148,7 @@ while run:
     pygame.display.flip()
 
 # Guardar cambios y cerrar bddd
+
 guardar_record.guardar_cambios()
 guardar_record.cerrar_bbdd()
 

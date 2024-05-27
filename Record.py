@@ -1,7 +1,7 @@
 
 import sqlite3 as sqlite
 
-class GuardarRecord:
+class Record:
 	def __init__(self):
 		self.bbdd = sqlite.connect("SnakeGame.db")
 		self.cursor = self.bbdd.cursor()
