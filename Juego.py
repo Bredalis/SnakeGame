@@ -3,41 +3,30 @@
 
 import pygame
 import random
-from Record import *
+from Ventana import crear_ventana
+from Personajes import crear_personajes
+from Sonidos import sonido
+from Acciones_Teclado import manejar_teclado
+from Dibujar_Elementos import dibujar_personajes, mostrar_puntos
+from Record import RecordLocal, RecordRemoto
 
-# Instancia para acceder 
-# al record del juego 
+# Instancia para acceder al record del juego 
 
-guardar_record = Record()
+guardar_record = RecordLocal()
+guardar_record_remoto = RecordRemoto()
 
 # Inicir pygame
 
 pygame.init()
 pygame.mixer.init()
 
-# Tamaño de la ventana
+ANCHO = 550
+ALTO = 500
 
-ANCHO, ALTO = 550, 500
+ventana = crear_ventana(ANCHO, ALTO)
 
-# Colores
-
-VERDE = (0, 255, 0)
-BLANCO = (255, 255, 255)
-
-ventana = pygame.display.set_mode((ANCHO, ALTO))
-pygame.display.set_caption("SnakeGame")
-
-# Crear imagen de la manzana
-
-manzana_img = pygame.image.load("Apple.png")
-manzana_rect = manzana_img.get_rect()
-manzana_rect.center = (ANCHO // 2, ALTO // 2) # Posicion
-
-# Crear serpiente
-
-serpiente_rect = pygame.Rect(100, 100, 30, 20)
-velocidad_x = 5
-velocidad_y = 0
+# Crear personajes
+manzana_img, manzana_rect, serpiente_rect, velocidad_x, velocidad_y = crear_personajes(ANCHO, ALTO)
 
 puntos = 0
 record = 0
@@ -53,64 +42,24 @@ while run:
         if evento.type == pygame.QUIT:
             run = False
 
-        elif evento.type == pygame.KEYDOWN:
-        	if evento.key == pygame.K_LEFT:
-        		pygame.mixer.music.load("Spinning.mp3")
-        		pygame.mixer.music.play()
-        		if velocidad_x == 0:  
-        			velocidad_x = -5
-        			velocidad_y = 0
-
-        	elif evento.key == pygame.K_RIGHT:
-        		pygame.mixer.music.load("Spinning.mp3")
-        		pygame.mixer.music.play()
-        		if velocidad_x == 0:
-        			velocidad_x = 5
-        			velocidad_y = 0
-
-        	elif evento.key == pygame.K_UP:
-        		pygame.mixer.music.load("Spinning.mp3")
-        		pygame.mixer.music.play()
-        		if velocidad_y == 0:  
-        			velocidad_x = 0
-        			velocidad_y = -5
-
-        	elif evento.key == pygame.K_DOWN:
-        		pygame.mixer.music.load("Spinning.mp3")
-        		pygame.mixer.music.play()
-        		if velocidad_y == 0:
-        			velocidad_x = 0
-        			velocidad_y = 5
+        # Manejar acciones del teclado
+        velocidad_x, velocidad_y = manejar_teclado(evento, velocidad_x, velocidad_y)
+        sonido("Spinning")
 
     # Velocidad de la serpiente
-
     reloj.tick(40)
 
     # Mover la serpiente en cada iteración
 
     serpiente_rect.x += velocidad_x
     serpiente_rect.y += velocidad_y
-
-    # Dibujar los personajes
-
-    ventana.fill((0, 0, 0))
-    ventana.blit(manzana_img, manzana_rect)
-    pygame.draw.rect(ventana, VERDE, serpiente_rect)
-
-    # Mostrar puntos
-
-    fuente = pygame.font.Font(None, 20)
-    texto_puntos = fuente.render(f"Puntos:  {puntos}", True, BLANCO)
-    texto_record = fuente.render(f"Record:  {record}", True, BLANCO)
-    texto_record_maximo = fuente.render(f"Maximo Record:  {guardar_record.mostrar_record()}", True, BLANCO)
-
-    ventana.blit(texto_puntos, (30, 30))
-    ventana.blit(texto_record, (130, 30))
-    ventana.blit(texto_record_maximo, (230, 30))
+    
+    # Dibujar elementos
+    dibujar_personajes(ventana, manzana_img, manzana_rect, serpiente_rect, (0, 255, 0))
+    mostrar_puntos(ventana, puntos, record, guardar_record, (255, 255, 255))
 
     if serpiente_rect.colliderect(manzana_rect):
-        pygame.mixer.music.load("Eating.mp3")
-        pygame.mixer.music.play()
+        sonido("Eating")
 
         nueva_posicion_x = random.randint(0, ANCHO - manzana_rect.width)
         nueva_posicion_y = random.randint(0, ALTO - manzana_rect.height)
@@ -119,7 +68,8 @@ while run:
         puntos += 1
         record = max(record, puntos)
 
-        guardar_record.guardar_record(record)
+        record_guardado = guardar_record.guardar_record(record)
+        guardar_record_remoto.ingresar_datos(record_guardado)
 
     # Ajustar las dimensiones de la serpiente para que se doble
 
@@ -132,12 +82,10 @@ while run:
         serpiente_rect.height = 30 + puntos * 10
 
     # Fin del juego
-
     if (serpiente_rect.left < 0 or serpiente_rect.right > ANCHO or
             serpiente_rect.top < 0 or serpiente_rect.bottom > ALTO):
 
-        pygame.mixer.music.load("GameOver.mp3")
-        pygame.mixer.music.play()
+        sonido("GameOver")
         run = False
 
         if run != True:
@@ -148,7 +96,6 @@ while run:
     pygame.display.flip()
 
 # Guardar cambios y cerrar bddd
-
 guardar_record.guardar_cambios()
 guardar_record.cerrar_bbdd()
 
