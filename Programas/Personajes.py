@@ -5,7 +5,7 @@ def crear_personajes(ANCHO, ALTO):
 
 	# Crear imagen de la manzana
 
-	manzana_img = pygame.image.load("Apple.png")
+	manzana_img = pygame.image.load("../Apple.png")
 	manzana_rect = manzana_img.get_rect()
 	manzana_rect.center = (ANCHO // 2, ALTO // 2) # Posicion
 

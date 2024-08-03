@@ -7,7 +7,7 @@ from pymongo.server_api import ServerApi
 
 class RecordLocal:
 	def __init__(self):
-		self.bbdd = sqlite.connect("SnakeGame.db")
+		self.bbdd = sqlite.connect("../SnakeGame.db")
 		self.cursor = self.bbdd.cursor()
 		self.datos = []
 
