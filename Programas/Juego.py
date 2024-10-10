@@ -1,5 +1,5 @@
 
-# Librerias
+# Librerías
 
 import pygame
 import random
